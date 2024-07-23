@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Grid {
+    id              String      @id     @default(cuid())
+    username        String
+    createdAt       DateTime    @default(now())
+    
+    gridItems       GridItem[]
+}
+
+model Item {
+    id              String      @id     @default(cuid())
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+    emoji           String
+    title           String
+    description     String
+    category        Int
+    
+    grids           GridItem[]
+}
+
+model GridItem {
+    gridId          String
+    grid            Grid        @relation(fields: [gridId], references: [id])
+    itemId          String
+    item            Item        @relation(fields: [itemId], references: [id])
+    position        Int
+    isChecked       Boolean     @default(false)
+    checkedAt       DateTime?
+
+    @@id([gridId, itemId])
+}
